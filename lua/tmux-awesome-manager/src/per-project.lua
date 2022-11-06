@@ -13,7 +13,7 @@ function M.run_project_terms()
   local commands_for_project = commands[p_name]
 
   if not commands_for_project then
-    print("this project doesn't have any commands configured.")
+    vim.notify("this project doesn't have any commands configured.")
 
     return
   end
