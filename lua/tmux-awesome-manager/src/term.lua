@@ -139,6 +139,31 @@ function M.run(opts)
   end
 end
 
+function M.switch_orientation()
+  if vim.g.tmux_default_orientation == 'horizontal' then
+    vim.notify("new panes will open HORIZONTALLY")
+
+    vim.g.tmux_default_orientation = 'vertical'
+  else
+    vim.notify("new panes will open VERTICALLY")
+
+    vim.g.tmux_default_orientation = 'horizontal'
+  end
+end
+
+
+function M.switch_open_as()
+  if vim.g.tmux_open_new_as == 'window' then
+    vim.notify("new terms will open as panes.")
+
+    vim.g.tmux_open_new_as = 'pane'
+  else
+    vim.notify("new terms will open as windows")
+
+    vim.g.tmux_open_new_as = 'window'
+  end
+end
+
 function M.run_wk(opts)
   local cur_saves = vim.g.tmux_saved_commands or {}
   table.insert(cur_saves, opts)
@@ -146,6 +171,5 @@ function M.run_wk(opts)
 
   return { function() M.execute_command(opts) end, opts.name }
 end
-
 
 return M

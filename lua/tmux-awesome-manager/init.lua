@@ -32,6 +32,8 @@ M.run_project_terms = per_project.run_project_terms
 M.run = term.run
 M.run_wk = term.run_wk
 M.visit_last = nav.visit_last
+M.switch_open_as = term.switch_open_as
+M.switch_orientation = term.switch_orientation
 
 return M
 
