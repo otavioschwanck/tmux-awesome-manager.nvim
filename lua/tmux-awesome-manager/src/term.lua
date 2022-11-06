@@ -48,6 +48,14 @@ function M.execute_command(opts)
   end
 end
 
+function M.kill_all_terms()
+  for __, value in pairs(vim.g.tmux_open_terms or {}) do
+    vim.fn.system('tmux run-shell -t ' .. value .. ' \'kill -s USR1 -- "-$(ps -o tpgid= -p #{pane_pid} | sed "s/^[[:blank:]]*//")"\'')
+  end
+
+  vim.notify("Safely killing terminals...")
+end
+
 function M.ask_questions(opts)
   if #(opts.questions or {}) > 0 then
     local index = 1
