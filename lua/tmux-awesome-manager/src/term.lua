@@ -102,7 +102,7 @@ function M.open(opts)
       orientation = ' -h '
     end
 
-    base_command = "tmux split-window -P -I -l " .. opts.size .. orientation .. ' -F "#{pane_id}" '
+    base_command = "tmux split-window -P -I -l " .. (opts.size or '50%') .. orientation .. ' -F "#{pane_id}" '
   end
 
   base_command = base_command .. " " .. extra_args
@@ -153,7 +153,7 @@ end
 function M.refresh_really_opens()
   local new_open = {}
 
-  for k, value in pairs(vim.g.tmux_open_terms) do
+  for k, value in pairs(vim.g.tmux_open_terms or {}) do
     local really_open = M.normalize_return(vim.fn.system("tmux has-session -t " .. value .. " 2>/dev/null && echo 123"))
 
     if M.pane_exists(value) then
@@ -228,7 +228,5 @@ function M.run_wk(opts)
 
   return { function() M.execute_command(opts) end, opts.name }
 end
-
-M.execute_command({ cmd = 'ls; read', name = 'joao' })
 
 return M
