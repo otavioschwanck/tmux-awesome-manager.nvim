@@ -1,6 +1,6 @@
 local M = {}
 
-local term = require('src.term')
+local term = require('tmux-awesome-manager.src.term')
 
 function M.get_entry_from_end(table, entry)
   local count = (table and #table or false)
@@ -33,7 +33,5 @@ function M.visit_last()
   vim.fn.system("tmux select-window -t \"" .. id .. "\"")
   vim.fn.system("tmux select-pane -t \"" .. id .. "\"")
 end
-
-M.visit_last()
 
 return M
