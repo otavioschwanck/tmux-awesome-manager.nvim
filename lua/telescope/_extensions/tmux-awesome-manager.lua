@@ -20,6 +20,8 @@ function M.include_key(name)
 end
 
 function M.list_terms(opts)
+  term.refresh_really_opens()
+
   local opts = opts or {}
 
   opts.prompt_title = 'Select a command to run on tmux:'

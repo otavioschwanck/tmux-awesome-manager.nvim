@@ -1,5 +1,9 @@
 local M = {}
 
+local per_project = require('tmux-awesome-manager.src.per-project')
+local term = require('tmux-awesome-manager.src.term')
+local nav = require("tmux-awesome-manager.src.nav")
+
 function M.setup(opts)
   local opts = opts or {}
 
@@ -23,6 +27,11 @@ function M.setup(opts)
   vim.g.tmux_open_terms = {}
   vim.g.tmux_default_size = opts.default_size or '50%'
 end
+
+M.run_project_terms = per_project.run_project_terms
+M.run = term.run
+M.run_wk = term.run_wk
+M.visit_last = nav.visit_last
 
 return M
 
