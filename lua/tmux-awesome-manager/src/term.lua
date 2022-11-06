@@ -53,7 +53,7 @@ function M.ask_questions(opts)
     local index = 1
 
     for __, value in ipairs(opts.questions) do
-      local user_input = vim.fn.input(value.question .. " ?")
+      local user_input = vim.fn.input(value.question .. ' ')
 
       if (user_input == "" and not(value.optional)) then
         vim.notify("\nThe input is required.  Canceling terminal command.")
