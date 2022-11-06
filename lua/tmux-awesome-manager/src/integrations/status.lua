@@ -1,7 +1,7 @@
 local M = {}
 
 function M.status_with_icons()
-  if vim.g.tmux_open_new_as then
+  if vim.g.tmux_open_new_as == 'window' then
     return " TMUX: Window"
   elseif vim.g.tmux_default_orientation == 'horizontal' then
     return "ײַ TMUX: Horizontal"
