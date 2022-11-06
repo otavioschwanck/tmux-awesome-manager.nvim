@@ -24,6 +24,9 @@ function M.execute_command(opts)
   opts.open_id = M.get_open_id(opts.name)
   opts.use_cwd = M.ternary(opts.tmux_use_cwd == false, false, true)
 
+  opts.close_on_timer = opts.close_on_timer or vim.g.tmux_close_on_timer or 0
+  opts.read_after_cmd = M.ternary(opts.read_after_cmd == false, false, true)
+
   if opts.open_id == "" then
     opts.is_open = false
   else
@@ -63,12 +66,18 @@ function M.open(opts)
   end
 
   if opts.open_as == 'window' then
-    base_command = "tmux new-window -P "
+    base_command = "tmux new-window -P -n '" .. opts.name .. "'"
   else
     base_command = "tmux split-window -P -I -l " .. opts.size .. ' -F "#{pane_id}" '
   end
 
   base_command = base_command .. " " .. extra_args
+
+  if opts.close_on_timer > 0 then
+    opts.cmd = opts.cmd .. '; sleep ' .. opts.close_on_timer
+  elseif opts.read_after_cmd then
+    opts.cmd = opts.cmd .. '; read'
+  end
 
   local open_terms = vim.g.tmux_open_terms
 
@@ -121,7 +130,7 @@ function M.refresh_really_opens()
 end
 
 function M.run(opts)
-  local cur_saves = vim.g.tmux_saved_commands
+  local cur_saves = vim.g.tmux_saved_commands or {}
   table.insert(cur_saves, opts)
   vim.g.tmux_saved_commands = cur_saves
 
@@ -129,5 +138,14 @@ function M.run(opts)
     M.execute_command(opts)
   end
 end
+
+function M.run_wk(opts)
+  local cur_saves = vim.g.tmux_saved_commands or {}
+  table.insert(cur_saves, opts)
+  vim.g.tmux_saved_commands = cur_saves
+
+  return { function() M.execute_command(opts) end, opts.name }
+end
+
 
 return M
