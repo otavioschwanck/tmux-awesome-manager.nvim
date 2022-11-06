@@ -1,14 +1,6 @@
 local M = {}
 
 function M.execute_command(opts)
-  local tmux_current_pane = M.normalize_return(vim.fn.system("echo $TMUX_PANE"))
-
-  if tmux_current_pane == "" then
-    vim.notify('TMUX is really running?')
-
-    return
-  end
-
   if not opts.name then
     vim.notify('You need to pass command_name to run the tmux command')
 
@@ -21,6 +13,8 @@ function M.execute_command(opts)
     return
   end
 
+  M.refresh_really_opens()
+
   opts.focus_when_call = M.ternary(opts.focus_when_call == false, false, true)
   opts.visit_first_call = M.ternary(opts.visit_first_call == false, false, true)
 
@@ -28,6 +22,7 @@ function M.execute_command(opts)
   opts.open_as = opts.open_as or vim.g.tmux_open_new_as
 
   opts.open_id = M.get_open_id(opts.name)
+  opts.use_cwd = M.ternary(opts.tmux_use_cwd == false, false, true)
 
   if opts.open_id == "" then
     opts.is_open = false
@@ -60,7 +55,11 @@ function M.open(opts)
   local extra_args = ''
 
   if not opts.visit_first_call then
-    extra_args = '-d '
+    extra_args = ' -d '
+  end
+
+  if opts.use_cwd == true then
+    extra_args = extra_args .. ' -c ' .. vim.fn.getcwd() .. ' '
   end
 
   if opts.open_as == 'window' then
@@ -90,16 +89,10 @@ end
 function M.get_open_id(name)
   local id = vim.g.tmux_open_terms[name]
 
-  if not id then
-    return ""
-  end
-
-  local really_open = M.normalize_return(vim.fn.system("tmux has-session -t " .. id .. " 2>/dev/null && echo 1"))
-
-  if really_open == "" then
-    return ""
-  else
+  if id then
     return id
+  else
+    return ""
   end
 end
 
@@ -109,13 +102,17 @@ function M.normalize_return(str)
   return str
 end
 
+function M.pane_exists(id)
+  return not(M.normalize_return(vim.fn.system("tmux display-message -t " .. id .. " -p '#{pane_id}'")) == "")
+end
+
 function M.refresh_really_opens()
   local new_open = {}
 
   for k, value in pairs(vim.g.tmux_open_terms) do
-    local really_open = M.normalize_return(vim.fn.system("tmux has-session -t " .. value .. " 2>/dev/null && echo 1"))
+    local really_open = M.normalize_return(vim.fn.system("tmux has-session -t " .. value .. " 2>/dev/null && echo 123"))
 
-    if not(really_open == "") then
+    if M.pane_exists(value) then
       new_open[k] = value
     end
   end
