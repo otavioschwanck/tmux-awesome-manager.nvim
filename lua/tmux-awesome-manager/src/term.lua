@@ -284,11 +284,7 @@ end
 --  opts.close_on_timer -- When the command completed, sleep for some seconds - default = what is setted on setup: 0
 --  opts.read_after_cmd -- When the command completed, wait for enter to close the window. default = true
 function M.run_wk(opts)
-  local cur_saves = vim.g.tmux_saved_commands or {}
-  table.insert(cur_saves, opts)
-  vim.g.tmux_saved_commands = cur_saves
-
-  return { function() M.execute_command(opts) end, opts.name }
+  return { M.run(opts), opts.name }
 end
 
 return M
