@@ -5,6 +5,8 @@ local term = require('tmux-awesome-manager.src.term')
 local nav = require("tmux-awesome-manager.src.nav")
 
 local function quit_neovim()
+  term.refresh_really_opens()
+
   local keyset = {}
   local n = 0
 
