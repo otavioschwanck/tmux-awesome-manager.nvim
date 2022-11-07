@@ -63,6 +63,7 @@ M.switch_open_as = term.switch_open_as
 M.switch_orientation = term.switch_orientation
 M.kill_all_terms = term.kill_all_terms
 M.refresh_really_opens = term.refresh_really_opens
+M.execute_command = term.execute_command
 M.send_text_to = term.send_text_to
 
 return M
