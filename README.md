@@ -26,6 +26,7 @@ for common commands of your workflow like yarn install, rails console, yarn add,
 ```lua
 require('tmux-awesome-manager').setup({
   per_project_commands = { -- Configure your per project servers with
+  -- project name = { { cmd, name } }
     api = { { cmd = 'rails server', name = 'Rails Server' } },
     front = { { cmd = 'yarn dev', name = 'react server' } },
   },
