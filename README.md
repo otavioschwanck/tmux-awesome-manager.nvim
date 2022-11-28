@@ -94,7 +94,7 @@ wk.register({
   r = {
     name = "+rails",
     R = tmux_term.run_wk({ cmd = 'rails s', name = 'Rails Server', visit_first_call = false, open_as = 'panel' }),
-    r = tmux_term.run_wk({ cmd = 'rails s', name = 'Rails Consolw', open_as = 'window' }),
+    r = tmux_term.run_wk({ cmd = 'rails s', name = 'Rails Console', open_as = 'window' }),
     b = tmux_term.run_wk({ cmd = 'bundle install', name = 'Bundle Install', open_as = 'pane', close_on_timer = 2, visit_first_call = false, focus_when_call = false }),
     g = tmux_term.run_wk({ cmd = 'rails generate %1', name = 'Rails Generate',
       questions = { { question = "Rails generate: ", required = true, open_as = 'pane', close_on_timer = 4,
