@@ -13,7 +13,7 @@ for common commands of your workflow like yarn install, rails console, yarn add,
 
 # Demonstration
 
-![demo](demo.gif)
+![demo](https://i.imgur.com/WnIEglJ.gif)
 
 # Requirements:
 
