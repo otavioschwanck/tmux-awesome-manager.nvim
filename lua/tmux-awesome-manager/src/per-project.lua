@@ -22,7 +22,7 @@ function M.run_project_terms()
     value.focus_when_call = false
     value.visit_first_call = false
 
-    if vim.g.tmux_project_open_as then
+    if vim.g.tmux_project_open_as and not(value.open_as) then
       value.open_as = vim.g.tmux_project_open_as
     end
 
