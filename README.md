@@ -30,6 +30,7 @@ require('tmux-awesome-manager').setup({
     api = { { cmd = 'rails server', name = 'Rails Server' } },
     front = { { cmd = 'yarn dev', name = 'react server' } },
   },
+  session_name = 'Neovim Terminals',
   -- default_size = '30%', -- on panes, the default size
   -- open_new_as = 'window' -- open new command as.  options: pane, window.
 })
@@ -59,18 +60,20 @@ I recommend the which-key, but is possible to map with vim.keymap too
 
 tmux_term.run() and tmux_term.run_wk() parameters:
 
-| param            | description                                                                                               |
-|------------------|-----------------------------------------------------------------------------------------------------------|
-| cmd              | Command to be runned on terminal                                                                          |
-| name             | Humanized name of command (to search and window name)                                                     |
-| focus_when_call  | Focus terminal instead opening a enw one - default = true                                                 |
-| visit_first_call | Focus the new opened window / pane. default = true                                                        |
-| size             | If open_as = pane, split with this size. default = 50%                                                    |
-| open_as          | Open as window or pane? Default: what is setted on setup (window)                                         |
-| use_cwd          | Use current cwd on new window / pane? Default: what is setted on setup (true)                             |
-| close_on_timer   | When the command completed, sleep for some seconds - default = what is setted on setup: 0                 |
-| read_after_cmd   | When the command completed, wait for enter to close the window. default = true                            |
-| questions        | Array of user inputs to be asked for the command.  On `cmd`, the result of inputs will be added on %1 %2. |
+| param            | description                                                                                                                   |
+|------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| cmd              | Command to be runned on terminal                                                                                              |
+| name             | Humanized name of command (to search and window name)                                                                         |
+| focus_when_call  | Focus terminal instead opening a enw one - default = true                                                                     |
+| visit_first_call | Focus the new opened window / pane. default = true                                                                            |
+| size             | If open_as = pane, split with this size. default = 50%                                                                        |
+| open_as          | Open as window, pane or separated_session? Default: what is setted on setup (window)                                          |
+| session_name     | When open_as is separated_session, the session name to open.  Set this if you want to all neovim instances have same session. |
+| use_cwd          | Use current cwd on new window / pane? Default: what is setted on setup (true)                                                 |
+| close_on_timer   | When the command completed, sleep for some seconds - default = what is setted on setup: 0                                     |
+| read_after_cmd   | When the command completed, wait for enter to close the window. default = true                                                |
+| questions        | Array of user inputs to be asked for the command.  On `cmd`, the result of inputs will be added on %1 %2.                     |
+| project_open_as  | Open as for project commands                                                                                                  |
 
 Example of question mapping:
 
@@ -94,7 +97,7 @@ local wk = require("which-key")
 wk.register({
   r = {
     name = "+rails",
-    R = tmux_term.run_wk({ cmd = 'rails s', name = 'Rails Server', visit_first_call = false, open_as = 'panel' }),
+    R = tmux_term.run_wk({ cmd = 'rails s', name = 'Rails Server', visit_first_call = false, open_as = 'separated_session', session_name = 'My Terms' }),
     r = tmux_term.run_wk({ cmd = 'rails s', name = 'Rails Console', open_as = 'window' }),
     b = tmux_term.run_wk({ cmd = 'bundle install', name = 'Bundle Install', open_as = 'pane', close_on_timer = 2, visit_first_call = false, focus_when_call = false }),
     g = tmux_term.run_wk({ cmd = 'rails generate %1', name = 'Rails Generate',

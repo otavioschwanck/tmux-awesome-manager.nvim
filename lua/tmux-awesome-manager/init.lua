@@ -45,7 +45,9 @@ function M.setup(opts)
   vim.g.tmux_default_orientation = opts.default_orientation or 'vertical'
   vim.g.tmux_open_new_as = opts.open_new_as or 'window'
   vim.g.tmux_open_terms = {}
+  vim.g.tmux_project_open_as = opts.project_open_as
   vim.g.tmux_default_size = opts.default_size or '50%'
+  vim.g.tmux_session_name = opts.session_name
 
   local autocommands = { { {"VimLeavePre"}, {"*"}, quit_neovim } }
   local cmd = vim.api.nvim_create_autocmd
