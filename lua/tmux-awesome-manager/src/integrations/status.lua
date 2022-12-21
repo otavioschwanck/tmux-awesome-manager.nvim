@@ -1,5 +1,7 @@
 local M = {}
 
+local term = require('tmux-awesome-manager.src.term')
+
 function M.status_with_icons()
   if vim.g.tmux_open_new_as == 'window' then
     return " TMUX: Window"
@@ -8,6 +10,35 @@ function M.status_with_icons()
   else
     return "ﬠ TMUX: Vertical"
   end
+end
+
+function M.open_terms()
+  term.refresh_really_opens()
+
+  local s = "["
+  local qtd = 0
+  local keyset={}
+
+  for k, v in pairs(vim.g.tmux_open_terms) do
+    qtd = qtd + 1
+    keyset[qtd] = k
+  end
+
+  if qtd == 0 then
+    return ""
+  end
+
+  for i = 1, #keyset, 1 do
+    s = s .. keyset[i]
+
+    if not #keyset == i then
+      s = s .. ", "
+    end
+  end
+
+  s = s .. "]"
+
+  return s
 end
 
 function M.status_no_icons()

@@ -110,6 +110,27 @@ wk.register({
 }, { prefix = "<leader>", silent = true })
 ```
 
+# Statusline
+
+```lua
+-- Status with icons:
+require('tmux-awesome-manager.src.integrations.status').status_with_icons()
+
+-- Status without icons:
+require('tmux-awesome-manager.src.integrations.status').status_no_icons()
+
+-- List of open terms
+require('tmux-awesome-manager.src.integrations.status').open_terms()
+
+-- Example for lualine:
+ins_right {
+  function()
+    return require('tmux-awesome-manager.src.integrations.status').open_terms()
+  end,
+  color = { fg = colors.green },
+}
+```
+
 # Tmux Pro tips to improve this plugin workflow
 
 - Create a shortcut for break pane / join pane:
@@ -149,3 +170,9 @@ To copy my tmux and alacritty config, visit my config at:
 - https://github.com/otavioschwanck/mood-nvim (config)
 - https://github.com/otavioschwanck/mood-nvim/blob/main/extra/.tmux.conf (tmux)
 - https://github.com/otavioschwanck/mood-nvim/blob/main/extra/alacritty.yml (alacritty)
+
+# Changelog
+
+1.2 - Text for statusline
+1.1 - Open terms in another session
+1.0 - Release
