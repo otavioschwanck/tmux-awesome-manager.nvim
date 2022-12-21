@@ -31,7 +31,7 @@ function M.open_terms()
   for i = 1, #keyset, 1 do
     s = s .. keyset[i]
 
-    if not #keyset == i then
+    if not(#keyset == i) then
       s = s .. ", "
     end
   end
