@@ -31,8 +31,9 @@ require('tmux-awesome-manager').setup({
     front = { { cmd = 'yarn dev', name = 'react server' } },
   },
   session_name = 'Neovim Terminals',
+  -- project_open_as = 'window', -- Open per_project_commands as.  Default: separated_session
   -- default_size = '30%', -- on panes, the default size
-  -- open_new_as = 'window' -- open new command as.  options: pane, window.
+  -- open_new_as = 'window' -- open new command as.  options: pane, window, separated_session.
 })
 ```
 
@@ -73,7 +74,6 @@ tmux_term.run() and tmux_term.run_wk() parameters:
 | close_on_timer   | When the command completed, sleep for some seconds - default = what is setted on setup: 0                                     |
 | read_after_cmd   | When the command completed, wait for enter to close the window. default = true                                                |
 | questions        | Array of user inputs to be asked for the command.  On `cmd`, the result of inputs will be added on %1 %2.                     |
-| project_open_as  | Open as for project commands                                                                                                  |
 
 Example of question mapping:
 

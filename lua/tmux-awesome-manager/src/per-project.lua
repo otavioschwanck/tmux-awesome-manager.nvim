@@ -24,6 +24,8 @@ function M.run_project_terms()
 
     if vim.g.tmux_project_open_as and not(value.open_as) then
       value.open_as = vim.g.tmux_project_open_as
+    else
+      value.open_as = 'separated_session'
     end
 
     term.execute_command(value)
