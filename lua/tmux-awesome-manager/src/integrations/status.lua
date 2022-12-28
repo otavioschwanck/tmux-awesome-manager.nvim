@@ -13,8 +13,6 @@ function M.status_with_icons()
 end
 
 function M.open_terms()
-  term.refresh_really_opens()
-
   local s = "["
   local qtd = 0
   local keyset={}
