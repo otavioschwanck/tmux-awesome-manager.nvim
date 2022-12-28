@@ -63,6 +63,8 @@ function M.kill_all_terms()
     vim.fn.system('tmux run-shell -t ' .. value .. ' \'kill -s USR1 -- "-$(ps -o tpgid= -p #{pane_pid} | sed "s/^[[:blank:]]*//")"\'')
   end
 
+  M.refresh_really_opens()
+
   notify("Safely killing terminals...", "info", { title = "Tmux Awesome Manager" })
 end
 
