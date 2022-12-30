@@ -175,6 +175,10 @@ function M.open(opts)
       open_terms[opts.name] .. '" "#{pane_id}"'))
   end
 
+  if opts.visit_first_call then
+    M.focus(open_terms[opts.name])
+  end
+
   vim.g.tmux_open_terms = open_terms
 end
 
