@@ -49,7 +49,11 @@ function M.setup(opts)
   vim.g.tmux_default_size = opts.default_size or '50%'
   vim.g.tmux_session_name = opts.session_name
 
-  local autocommands = { { {"VimLeavePre"}, {"*"}, quit_neovim } }
+  local refresh = require('tmux-awesome-manager.src.term').refresh_really_opens
+
+  local autocommands = { { {"VimLeavePre"}, {"*"}, quit_neovim },
+                         { {"FocusGained"}, {"*"}, refresh } }
+
   local cmd = vim.api.nvim_create_autocmd
 
   for i = 1, #autocommands, 1 do
