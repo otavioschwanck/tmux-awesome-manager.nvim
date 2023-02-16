@@ -46,16 +46,31 @@ function M.execute_command(opts)
   end
 
   if not (opts.is_open) then
-    opts = M.ask_questions(opts)
+    local new_opts = M.ask_questions(M.deepcopy(opts))
 
-    if not(opts == false) then
-      M.open(opts)
+    if not(new_opts == false) then
+      M.open(new_opts)
     end
   elseif opts.focus_when_call then
     M.focus(opts.open_id)
   else
     M.close_and_open(opts)
   end
+end
+
+function M.deepcopy(orig)
+    local orig_type = type(orig)
+    local copy
+    if orig_type == 'table' then
+        copy = {}
+        for orig_key, orig_value in next, orig, nil do
+            copy[M.deepcopy(orig_key)] = M.deepcopy(orig_value)
+        end
+        setmetatable(copy, M.deepcopy(getmetatable(orig)))
+    else -- number, string, boolean, etc
+        copy = orig
+    end
+    return copy
 end
 
 function M.kill_all_terms()
@@ -69,10 +84,12 @@ function M.kill_all_terms()
 end
 
 function M.ask_questions(opts)
-  if #(opts.questions or {}) > 0 then
+  local new_opts = opts
+
+  if #(new_opts.questions or {}) > 0 then
     local index = 1
 
-    for __, value in ipairs(opts.questions) do
+    for __, value in ipairs(new_opts.questions) do
       local user_input = vim.fn.input(value.question .. ' ')
 
       if (user_input == "" and not(value.optional)) then
@@ -81,12 +98,12 @@ function M.ask_questions(opts)
         return false
       end
 
-      opts.cmd = string.gsub(opts.cmd, '%%' .. index, user_input)
+      new_opts.cmd = string.gsub(new_opts.cmd, '%%' .. index, user_input)
     end
 
-    return opts
+    return new_opts
   else
-    return opts
+    return new_opts
   end
 end
 
