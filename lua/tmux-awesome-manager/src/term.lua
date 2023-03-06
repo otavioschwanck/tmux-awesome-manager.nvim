@@ -25,6 +25,10 @@ function M.execute_command(opts)
 
   M.refresh_really_opens()
 
+  if vim.g.tmux_use_icon then
+    opts.name = vim.g.tmux_icon .. opts.name
+  end
+
   opts.focus_when_call = M.ternary(opts.focus_when_call == false, false, true)
   opts.visit_first_call = M.ternary(opts.visit_first_call == false, false, true)
 

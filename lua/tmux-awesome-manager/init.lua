@@ -49,6 +49,9 @@ function M.setup(opts)
   vim.g.tmux_default_size = opts.default_size or '50%'
   vim.g.tmux_session_name = opts.session_name
 
+  vim.g.tmux_use_icon = opts.use_icon or false
+  vim.g.tmux_icon = opts.icon or ' '
+
   local refresh = require('tmux-awesome-manager.src.term').refresh_really_opens
 
   local autocommands = { { {"VimLeavePre"}, {"*"}, quit_neovim },
