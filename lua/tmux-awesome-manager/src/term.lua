@@ -162,15 +162,23 @@ function M.open(opts)
 
   local session_name = opts.session_name or M.session_name()
 
-  if opts.open_as == 'window' then
-    base_command = "tmux new-window -P -n '" .. opts.name .. "'"
-  elseif opts.open_as == 'separated_session' and M.session_exists(session_name) then
-    base_command = "tmux new-window -P -F '#{pane_id}' -n " .. "'" .. opts.name .. "' -t '" .. session_name .. "': "
+  local name
 
-    notify("Opening " .. opts.name .. " in session: " .. session_name, " info", { title = "Tmux Awesome Manager" })
+  if vim.g.tmux_use_icon then
+    name = vim.g.tmux_icon .. opts.name
+  else
+    name = opts.name
+  end
+
+  if opts.open_as == 'window' then
+    base_command = "tmux new-window -P -n '" .. name .. "'"
+  elseif opts.open_as == 'separated_session' and M.session_exists(session_name) then
+    base_command = "tmux new-window -P -F '#{pane_id}' -n " .. "'" .. name .. "' -t '" .. session_name .. "': "
+
+    notify("Opening " .. name .. " in session: " .. session_name, " info", { title = "Tmux Awesome Manager" })
   elseif opts.open_as == 'separated_session' then
-    base_command = "tmux new-session -P -d -F '#{pane_id}' -s '" .. session_name .. "' -n " .. "'" .. opts.name .. "' "
-    notify("Opening " .. opts.name .. ".  Creating session: " .. session_name, " info", { title = "Tmux Awesome Manager" })
+    base_command = "tmux new-session -P -d -F '#{pane_id}' -s '" .. session_name .. "' -n " .. "'" .. name .. "' "
+    notify("Opening " .. name .. ".  Creating session: " .. session_name, " info", { title = "Tmux Awesome Manager" })
   else
     local orientation = ' -v '
 
@@ -193,15 +201,15 @@ function M.open(opts)
 
   local result = vim.fn.system(base_command .. ' "' .. opts.cmd .. '"')
 
-  open_terms[opts.name] = M.normalize_return(result)
+  open_terms[name] = M.normalize_return(result)
 
   if opts.open_as == 'window' then
-    open_terms[opts.name] = M.normalize_return(vim.fn.system('tmux display -pt "' ..
-      open_terms[opts.name] .. '" "#{pane_id}"'))
+    open_terms[name] = M.normalize_return(vim.fn.system('tmux display -pt "' ..
+      open_terms[name] .. '" "#{pane_id}"'))
   end
 
   if opts.visit_first_call then
-    M.focus(open_terms[opts.name])
+    M.focus(open_terms[name])
   end
 
   vim.g.tmux_open_terms = open_terms
