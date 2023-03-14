@@ -25,8 +25,10 @@ function M.execute_command(opts)
 
   M.refresh_really_opens()
 
+  local name = opts.name
+
   if vim.g.tmux_use_icon then
-    opts.name = vim.g.tmux_icon .. opts.name
+    name = vim.g.tmux_icon .. name
   end
 
   opts.focus_when_call = M.ternary(opts.focus_when_call == false, false, true)
@@ -35,7 +37,7 @@ function M.execute_command(opts)
   opts.size = opts.size or vim.g.tmux_default_size
   opts.open_as = opts.open_as or vim.g.tmux_open_new_as
 
-  opts.open_id = M.get_open_id(opts.name)
+  opts.open_id = M.get_open_id(name)
   opts.use_cwd = M.ternary(opts.tmux_use_cwd == false, false, true)
 
   opts.close_on_timer = opts.close_on_timer or vim.g.tmux_close_on_timer or 0
