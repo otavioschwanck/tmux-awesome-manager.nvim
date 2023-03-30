@@ -41,7 +41,6 @@ function M.setup(opts)
 
   vim.g.tmux_close_on_timer = opts.close_on_timer or 0
   vim.g.tmux_per_project_commands = opts.per_project_commands or {}
-  vim.g.tmux_saved_commands = {}
   vim.g.tmux_default_orientation = opts.default_orientation or 'vertical'
   vim.g.tmux_open_new_as = opts.open_new_as or 'window'
   vim.g.tmux_open_terms = {}
