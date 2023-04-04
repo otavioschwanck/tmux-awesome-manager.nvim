@@ -13,7 +13,7 @@ function M.status_with_icons()
 end
 
 function M.open_terms()
-  local s = "["
+  local s = ""
   local qtd = 0
   local keyset={}
 
@@ -33,8 +33,6 @@ function M.open_terms()
       s = s .. ", "
     end
   end
-
-  s = s .. "]"
 
   return s
 end
