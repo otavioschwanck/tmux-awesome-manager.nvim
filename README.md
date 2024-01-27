@@ -35,7 +35,8 @@ require('tmux-awesome-manager').setup({
   icon = ' ', -- Prefix icon to use
   -- project_open_as = 'window', -- Open per_project_commands as.  Default: separated_session
   -- default_size = '30%', -- on panes, the default size
-  -- open_new_as = 'window' -- open new command as.  options: pane, window, separated_session.
+  -- open_new_as = 'window', -- open new command as.  options: pane, window, separated_session.
+  -- default_orientation = 'vertical' -- Can also be horizontal
 })
 ```
 
