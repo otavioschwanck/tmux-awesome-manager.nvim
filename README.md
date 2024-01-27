@@ -77,6 +77,7 @@ tmux_term.run() and tmux_term.run_wk() parameters:
 | close_on_timer   | When the command completed, sleep for some seconds - default = what is setted on setup: 0                                     |
 | read_after_cmd   | When the command completed, wait for enter to close the window. default = true                                                |
 | questions        | Array of user inputs to be asked for the command.  On `cmd`, the result of inputs will be added on %1 %2.                     |
+| open_id          | You can use various commands using same pane / window.  Just set same id for all and add focus_when_call = false and do the magic |
 
 Example of question mapping:
 

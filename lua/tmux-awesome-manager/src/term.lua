@@ -27,11 +27,15 @@ function M.execute_command(opts)
 
 	local name
 
-	if vim.g.tmux_use_icon then
+	if opts.pane_id then
+		name = opts.pane_id
+	elseif vim.g.tmux_use_icon then
 		name = vim.g.tmux_icon .. opts.name
 	else
 		name = opts.name
 	end
+
+	opts.real_name = name
 
 	opts.focus_when_call = M.ternary(opts.focus_when_call == false, false, true)
 	opts.visit_first_call = M.ternary(opts.visit_first_call == false, false, true)
@@ -183,13 +187,7 @@ function M.open(opts)
 
 	local session_name = opts.session_name or M.session_name()
 
-	local name
-
-	if vim.g.tmux_use_icon then
-		name = vim.g.tmux_icon .. opts.name
-	else
-		name = opts.name
-	end
+	local name = opts.real_name
 
 	if opts.open_as == "window" then
 		base_command = "tmux new-window -P -n '" .. name .. "'"
