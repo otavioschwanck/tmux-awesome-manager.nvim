@@ -1,7 +1,8 @@
 # Tmux Awesome Manager
 
 This plugin provides a pack of functionalities to work with TMUX on Neovim. Manage your commands and run inside neovim!  This plugin is perfect
-for common commands of your workflow like yarn install, rails console, yarn add, bundle install, etc.
+
+For common commands of your workflow like yarn install, rails console, yarn add, bundle install, etc.
 
 # Features:
 
@@ -114,6 +115,16 @@ wk.register({
 }, { prefix = "<leader>", silent = true })
 ```
 
+# Add command without a mapping
+
+Just run without assigning to a key map:
+
+```lua
+
+local tmux_term = require('tmux-awesome-manager.src.term')
+
+tmux_term.run({ cmd = 'yarn add %1', name = 'Yarn Add', questions = { { question = 'package name: ', required = true } } })
+```
 # Statusline
 
 ```lua
@@ -159,21 +170,21 @@ unbind-key C-x
 bind-key C-x send-prefix
 ```
 
-So, in alacritty config, when i need to call something, i just put \x18 + the code of the key i want.  Example:
+So, in alacritty config, when i need to call something, i just put \u0018 + the key i want.  Example:
 
 ```yaml
 # This will call C-x j using Alt + j
-- { key: J, mods: Alt, chars: "\x18\x6d" }
+[[keyboard.bindings]]
+chars = "\u0018m"
+key = "J"
+mods = "Alt"
 ```
-
-To see what is the code of a key, just run:
-`xxd -psd`.
 
 To copy my tmux and alacritty config, visit my config at:
 
 - https://github.com/otavioschwanck/mood-nvim (config)
-- https://github.com/otavioschwanck/mood-nvim/blob/main/extra/.tmux.conf (tmux)
 - https://github.com/otavioschwanck/mood-nvim/blob/main/extra/alacritty.yml (alacritty)
+- https://github.com/otavioschwanck/mood-nvim/blob/main/extra/.tmux.conf (tmux)
 
 # Changelog
 
