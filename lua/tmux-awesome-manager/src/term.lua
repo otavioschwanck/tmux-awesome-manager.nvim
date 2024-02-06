@@ -108,7 +108,9 @@ function M.ask_questions(opts)
 	local new_opts = opts
 
 	if #(new_opts.questions or {}) > 0 then
-		for index, value in ipairs(new_opts.questions) do
+		local index = 1
+		
+		for __, value in ipairs(new_opts.questions) do
 			local user_input = vim.fn.input(value.question .. " ")
 
 			if user_input == "" and not value.optional then
@@ -121,7 +123,8 @@ function M.ask_questions(opts)
 				return false
 			end
 
-			new_opts.cmd = string.gsub(new_opts.cmd, "%%" .. (index + 1), user_input)
+			new_opts.cmd = string.gsub(new_opts.cmd, "%%" .. index, user_input)
+			index += 1
 		end
 
 		return new_opts
