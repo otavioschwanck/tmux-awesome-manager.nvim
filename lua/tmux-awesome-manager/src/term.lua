@@ -124,7 +124,7 @@ function M.ask_questions(opts)
 			end
 
 			new_opts.cmd = string.gsub(new_opts.cmd, "%%" .. index, user_input)
-			index += 1
+			index = index + 1
 		end
 
 		return new_opts
