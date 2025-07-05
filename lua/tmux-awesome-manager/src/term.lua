@@ -350,37 +350,20 @@ function M.send_text_to(opts)
 
 	local opts = opts or {}
 
-	opts.prompt_title = "Send selected text to:"
-
-	opts = require("telescope.themes").get_dropdown(opts)
-
 	vim.cmd('normal! "ty')
 
-	local pickers = require("telescope.pickers")
-	local finders = require("telescope.finders")
-	local conf = require("telescope.config").values
-	local actions = require("telescope.actions")
-	local action_state = require("telescope.actions.state")
-
-	pickers
-		.new(opts, {
-			finder = finders.new_table({
-				results = keyset,
-			}),
-			sorter = conf.generic_sorter(opts),
-			attach_mappings = function(prompt_bufnr, _)
-				actions.select_default:replace(function()
-					actions.close(prompt_bufnr)
-					local selection = action_state.get_selected_entry()
-
-					vim.fn.system(
-						"tmux send-keys -t " .. vim.g.tmux_open_terms[selection[1]] .. " '" .. vim.fn.getreg("t") .. "'"
-					)
-				end)
-				return true
-			end,
-		})
-		:find()
+	local picker = require('tmux-awesome-manager.src.picker')
+	
+	picker.pick({
+		prompt_title = "Send selected text to:",
+		results = keyset,
+		on_select = function(selection)
+			vim.fn.system(
+				"tmux send-keys -t " .. vim.g.tmux_open_terms[selection.value] .. " '" .. vim.fn.getreg("t") .. "'"
+			)
+		end,
+		telescope_opts = opts
+	})
 end
 
 -- Add function to open term to be used on a keybinding.
