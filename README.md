@@ -16,7 +16,7 @@ This plugin provides a pack of functionalities to work with TMUX on Neovim. Mana
 
 ## 📋 Requirements:
 
-- 🖥️ Tmux >= 3.3 (Ubuntu 22.04 has an older version, install from another source)
+- 🖥️ Tmux >= 3.3 **or** Herdr (see [multiplexer support](#-multiplexer-support-tmux--herdr))
 - 🔭 Telescope (Optional)
 - 🔍 fzf-lua (Optional)
 - 🗝️ Which-key (Optional)
@@ -50,6 +50,8 @@ This plugin provides a pack of functionalities to work with TMUX on Neovim. Mana
       -- default_size = '30%', -- on panes, the default size
       -- open_new_as = 'window', -- open new command as.  options: pane, window, separated_session.
       -- default_orientation = 'vertical' -- Can also be horizontal
+      -- multiplexer = 'tmux', -- Switch to 'herdr' to use Herdr instead of tmux
+      -- keep_open = false, -- (herdr only) keep pane open after command finishes
     })
   end
 }
@@ -153,8 +155,36 @@ require('tmux-awesome-manager').setup({
   -- default_size = '30%', -- on panes, the default size
   -- open_new_as = 'window', -- open new command as.  options: pane, window, separated_session.
   -- default_orientation = 'vertical' -- Can also be horizontal
+  -- multiplexer = 'tmux', -- Switch to 'herdr' to use Herdr instead of tmux
+  -- keep_open = false, -- (herdr only) keep pane open after command finishes
 })
 ```
+
+## 🔀 Multiplexer Support (tmux & herdr)
+
+The plugin supports both **tmux** (default) and **[Herdr](https://herdr.dev)** as terminal multiplexer backends.
+
+### Using with Herdr
+
+[Herdr](https://herdr.dev) is a terminal workspace manager designed for AI coding agents. To use it:
+
+```lua
+require('tmux-awesome-manager').setup({
+  multiplexer = 'herdr', -- use herdr instead of tmux
+  keep_open = false,     -- close pane after command finishes (default: false)
+})
+```
+
+### `multiplexer` option
+
+| value     | description            |
+|-----------|------------------------|
+| `'tmux'`  | Use tmux (default)     |
+| `'herdr'` | Use Herdr              |
+
+### `keep_open` option (herdr only)
+
+When using herdr, panes are created with a persistent shell. By default (`keep_open = false`), the pane closes automatically when the command finishes — matching tmux's behavior. Set `keep_open = true` to keep the pane open after the command exits.
 
 ### 🎯 Picker Options
 
@@ -367,6 +397,7 @@ mods = "Alt"
 
 ## 📝 Changelog
 
+- **1.4** - 🔀 Added multiplexer abstraction with Herdr support (`multiplexer = 'herdr'`, `keep_open` option)
 - **1.3** - 🔍 Added fzf-lua picker support as alternative to telescope
 - **1.2** - 📊 Text for statusline
 - **1.1** - 🖥️ Open terms in another session

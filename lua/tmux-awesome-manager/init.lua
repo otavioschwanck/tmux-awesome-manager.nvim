@@ -51,6 +51,10 @@ function M.setup(opts)
   -- Set the picker preference (telescope or fzf-lua)
   vim.g.tmux_picker = opts.picker or 'telescope'
 
+  vim.g.tmux_binary = opts.multiplexer or "tmux"
+  vim.g.tmux_debug = opts.debug or false
+  vim.g.tmux_keep_open = opts.keep_open or false
+
   vim.g.tmux_use_icon = opts.use_icon or false
   vim.g.tmux_icon = opts.icon or ' '
 

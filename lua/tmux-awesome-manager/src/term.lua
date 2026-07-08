@@ -10,6 +10,10 @@ if not notify_ok then
 	notify = vim.notify
 end
 
+local function mux()
+	return require('tmux-awesome-manager.src.multiplexer').get()
+end
+
 function M.execute_command(opts)
 	if not opts.name then
 		notify("You need to pass command_name to run the tmux command", "error", { title = "Tmux Awesome Manager" })
@@ -91,12 +95,9 @@ function M.deepcopy(orig)
 end
 
 function M.kill_all_terms()
+	local m = mux()
 	for __, value in pairs(vim.g.tmux_open_terms or {}) do
-		vim.fn.system(
-			"tmux run-shell -t "
-				.. value
-				.. ' \'kill -s USR1 -- "-$(ps -o tpgid= -p #{pane_pid} | sed "s/^[[:blank:]]*//")"\''
-		)
+		m.kill_term(value)
 	end
 
 	M.refresh_really_opens()
@@ -109,7 +110,7 @@ function M.ask_questions(opts)
 
 	if #(new_opts.questions or {}) > 0 then
 		local index = 1
-		
+
 		for __, value in ipairs(new_opts.questions) do
 			local user_input = vim.fn.input(value.question .. " ")
 
@@ -142,19 +143,16 @@ function M.ternary(cond, T, F)
 end
 
 function M.close(opts)
-	vim.fn.system("tmux kill-pane -t " .. opts.open_id)
+	mux().close(opts.open_id)
 end
 
 function M.close_and_open(opts)
-	vim.fn.system("tmux kill-pane -t " .. opts.open_id)
-
+	mux().close(opts.open_id)
 	M.open(opts)
 end
 
 function M.session_exists(session_name)
-	local result = vim.fn.system("tmux ls | grep '" .. session_name .. "'")
-
-	return result ~= ""
+	return mux().session_exists(session_name)
 end
 
 function M.session_name()
@@ -174,75 +172,52 @@ function M.session_name()
 end
 
 function M.open(opts)
-	local base_command
-
-	local extra_args = ""
-
-	if not opts.visit_first_call then
-		extra_args = " -d "
-	end
-
-	if opts.use_cwd == true then
-		extra_args = extra_args .. " -c " .. vim.fn.getcwd() .. " "
-	end
-
+	local cmd = opts.cmd
+	local cwd = opts.use_cwd and vim.fn.getcwd() or nil
+	local focus = opts.visit_first_call
+	local name = opts.real_name
 	local session_name = opts.session_name or M.session_name()
 
-	local name = opts.real_name
-
-	if opts.open_as == "window" then
-		base_command = "tmux new-window -P -n '" .. name .. "'"
-	elseif opts.open_as == "separated_session" and M.session_exists(session_name) then
-		base_command = "tmux new-window -P -F '#{pane_id}' -n " .. "'" .. name .. "' -t '" .. session_name .. "': "
-
-		notify("Opening " .. name .. " in session: " .. session_name, " info", { title = "Tmux Awesome Manager" })
-	elseif opts.open_as == "separated_session" then
-		base_command = "tmux new-session -P -d -F '#{pane_id}' -s '" .. session_name .. "' -n " .. "'" .. name .. "' "
-		notify(
-			"Opening " .. name .. ".  Creating session: " .. session_name,
-			" info",
-			{ title = "Tmux Awesome Manager" }
-		)
-	else
-		local orientation = " -v "
-
-		if opts.orientation == "horizontal" then
-			orientation = " -h "
-		end
-
-		base_command = "tmux split-window -P -I -l " .. (opts.size or "50%") .. orientation .. ' -F "#{pane_id}" '
+	if opts.close_on_timer > 0 then
+		cmd = cmd .. "; sleep " .. opts.close_on_timer
+	elseif opts.read_after_cmd then
+		cmd = cmd .. "; read"
 	end
 
-	base_command = base_command .. " " .. extra_args
+	if vim.g.tmux_debug then
+		notify(
+			"OPEN: type=" .. (opts.open_as or "pane") .. " name=" .. name .. " cmd=" .. cmd,
+			"warn",
+			{ title = "Tmux Awesome Manager DEBUG" }
+		)
+	end
 
-	if opts.close_on_timer > 0 then
-		opts.cmd = opts.cmd .. "; sleep " .. opts.close_on_timer
-	elseif opts.read_after_cmd then
-		opts.cmd = opts.cmd .. "; read"
+	local m = mux()
+	local pane_id
+
+	if opts.open_as == "window" then
+		pane_id = m.open_window(name, cmd, cwd, focus)
+	elseif opts.open_as == "separated_session" then
+		pane_id = m.open_session(session_name, name, cmd, cwd, focus)
+	else
+		pane_id = m.open_pane(cmd, opts.size, opts.orientation, cwd, focus)
+	end
+
+	if vim.g.tmux_debug then
+		notify("PANE_ID: " .. vim.inspect(pane_id), "warn", { title = "Tmux Awesome Manager DEBUG" })
 	end
 
 	local open_terms = vim.g.tmux_open_terms
-
-	local result = vim.fn.system(base_command .. ' "' .. opts.cmd .. '"')
-
-	open_terms[name] = M.normalize_return(result)
-
-	if opts.open_as == "window" then
-		open_terms[name] =
-			M.normalize_return(vim.fn.system('tmux display -pt "' .. open_terms[name] .. '" "#{pane_id}"'))
-	end
-
-	if opts.visit_first_call then
-		M.focus(open_terms[name])
-	end
-
+	open_terms[name] = pane_id
 	vim.g.tmux_open_terms = open_terms
+
+	if focus then
+		M.focus(pane_id)
+	end
 end
 
 function M.focus(id)
-	vim.fn.system('tmux switch-client -t "' .. id .. '"')
-	vim.fn.system('tmux select-window -t "' .. id .. '"')
-	vim.fn.system('tmux select-pane -t "' .. id .. '"')
+	mux().focus(id)
 end
 
 function M.get_open_id(name)
@@ -262,17 +237,15 @@ function M.normalize_return(str)
 end
 
 function M.pane_exists(id)
-	return not (M.normalize_return(vim.fn.system("tmux display-message -t " .. id .. " -p '#{pane_id}'")) == "")
+	return mux().pane_exists(id)
 end
 
 function M.refresh_really_opens()
+	local m = mux()
 	local new_open = {}
 
 	for k, value in pairs(vim.g.tmux_open_terms or {}) do
-		local really_open =
-			M.normalize_return(vim.fn.system("tmux has-session -t " .. value .. " 2>/dev/null && echo 123"))
-
-		if M.pane_exists(value) then
+		if m.pane_alive(value) then
 			new_open[k] = value
 		end
 	end
@@ -353,14 +326,12 @@ function M.send_text_to(opts)
 	vim.cmd('normal! "ty')
 
 	local picker = require('tmux-awesome-manager.src.picker')
-	
+
 	picker.pick({
 		prompt_title = "Send selected text to:",
 		results = keyset,
 		on_select = function(selection)
-			vim.fn.system(
-				"tmux send-keys -t " .. vim.g.tmux_open_terms[selection.value] .. " '" .. vim.fn.getreg("t") .. "'"
-			)
+			mux().send_text(vim.g.tmux_open_terms[selection.value], vim.fn.getreg("t"))
 		end,
 		telescope_opts = opts
 	})
