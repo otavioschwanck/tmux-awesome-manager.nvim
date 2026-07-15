@@ -20,7 +20,7 @@ function M.open_pane(cmd, size, orientation, cwd, focus)
 	local dir = orientation == "horizontal" and " -h " or " -v "
 	local extra = focus and "" or " -d "
 	if cwd then extra = extra .. " -c " .. cwd .. " " end
-	local result = vim.fn.system(b() .. " split-window -P -I -l " .. (size or "50%") .. dir .. extra .. ' -F "#{pane_id}" "' .. cmd .. '"')
+	local result = vim.fn.system(b() .. " split-window -P -l " .. (size or "50%") .. dir .. extra .. ' -F "#{pane_id}" "' .. cmd .. '"')
 	return normalize(result)
 end
 
